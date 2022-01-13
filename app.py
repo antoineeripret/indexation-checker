@@ -14,6 +14,17 @@ You can check up to 15.000 URLs using a simple CSV file containing your URLs as 
 **That being said, you can also sign up for a free account and check up to 125 URLs per month.**
 ''')
 
+with st.expander('How does it work?'):
+    st.markdown('''
+
+    This tool leverages https://www.valueserp.com/ to check if you URL are indexed at scale, using their own dedicated infrastructure. The principle is simple: 
+    - A search is launched using your URL as the keyword 
+    - Top 20 results are extracted 
+    - If your URL is not within the Top 20, the URL is marked as not indexed   
+    
+    ''')
+
+
 #first step
 with st.expander('STEP 1: Configure you extraction'):
     st.markdown('Please refer to [the playground](https://app.valueserp.com/playground) to know what the possible values are for these fields.')
@@ -52,7 +63,7 @@ with st.expander('STEP 1: Configure you extraction'):
             st.write(f'The execution of the script will cost you {str(len(urls))} credits. ')
 
 #second step
-with st.expander('STEP 2: Add searches'):
+with st.expander('STEP 2: Launch searches'):
     st.markdown('**You cannot launch this part of the tool without completing step 1 first!! Execution will fail.**')
     if st.button('Launch process'):
         #create our list of sets of keywords
