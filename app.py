@@ -156,7 +156,7 @@ with st.expander('STEP 4: Retrieve results'):
                 return df.to_csv().encode('utf-8')
 
 
-            csv = convert_df(data)
+            csv = convert_df(indexation_results)
 
             st.download_button(
             "Press to download detail by url",
