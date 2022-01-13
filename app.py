@@ -1,20 +1,23 @@
+#libraries used in the script
 import streamlit as st
 import pandas as pd
 import requests
 import json 
-import io
 
+#Introduction 
 st.title('Indexation checker')
 st.markdown(
-    '''Indexation checker done by [Antoine Eripret](https://twitter.com/antoineripret). 
+    '''Indexation checker done by [Antoine Eripret](https://twitter.com/antoineripret). You can report a bug or an issue in [Github](https://github.com/antoineeripret/indexation-checker).
 
-You can check up to 1.000 URLs using a simple CSV file containing your URLs as an input. The script is based on https://www.valueserp.com/ and you need to have a paid account to unleash its full potential. 
+You can check up to 15.000 URLs using a simple CSV file containing your URLs as an input. The script is based on https://www.valueserp.com/ and you need to have a paid account to unleash its full potential. 
 
 **That being said, you can also sign up for a free account and check up to 125 URLs per month.**
 ''')
 
+#first step
 with st.expander('STEP 1: Configure you extraction'):
-    #input from user
+    st.markdown('Please refer to [the playground](https://app.valueserp.com/playground) to know what the possible values are for these fields.')
+    #inputs from user
     #api_key
     api_key = st.text_input('Enter your API Key')
     #country
@@ -22,6 +25,7 @@ with st.expander('STEP 1: Configure you extraction'):
     #Google domain 
     google_domain = st.text_input('Domain (google.fr, google.es...)') 
 
+    #file upload
     st.header('File Upload')
     st.markdown(
         '''
@@ -29,13 +33,17 @@ with st.expander('STEP 1: Configure you extraction'):
         '''
     )
 
-    uploaded_file = st.file_uploader("Choose a CSV file")
+    uploaded_file = st.file_uploader("Choose a (comma-separated) CSV file.")
     if uploaded_file is not None:
         # Can be used wherever a "file-like" object is accepted:
         dataframe = pd.read_csv(uploaded_file)
+        #colum selector
         column = st.selectbox('Choose the column with your URLs:', dataframe.columns)
+        #calculate API cost to inform the user
         if st.button('Calulate API cost'):
+            #remove duplicates and store it in session_state 
             st.session_state['urls'] = dataframe[column].unique()
+            #batches cannot include more than 15k searches 
             if len(st.session_state['urls']) > 15000:
                 st.write('You cannot check more than 15.000 URLs. Only the first 15.000 rows will be included.')
                 urls = st.session_state['urls'][0:15000]
@@ -43,7 +51,9 @@ with st.expander('STEP 1: Configure you extraction'):
                 urls = st.session_state['urls']
             st.write(f'The execution of the script will cost you {str(len(urls))} credits. ')
 
+#second step
 with st.expander('STEP 2: Launch searches'):
+    st.markdown('**You cannot launch this part of the tool without completing step 1 first!! Execution will fail.**')
     if st.button('Launch process'):
         #create our list of sets of keywords
         keywords = []
@@ -101,8 +111,9 @@ with st.expander('STEP 2: Launch searches'):
             st.write('Error creating the bacth:')
             st.write(api_response)
 
-
+#third step 
 with st.expander('STEP 3: Run batch'):
+    st.markdown('**You cannot launch this part of the tool without completing step 1 & 2 first!! Execution will fail.**')
     if st.button('Run batch'):
         batch_id = st.session_state['batch_id'] 
         api_result = requests.get(f'https://api.valueserp.com/batches/{batch_id}/start', params={'api_key':api_key})
@@ -116,11 +127,9 @@ with st.expander('STEP 3: Run batch'):
 
 
 with st.expander('STEP 4: Retrieve results'):
-    if 'batch_id' in st.session_state:
-        batch_id = st.session_state['batch_id'] 
-    else:
-        batch_id = st.text_input('Please indicate your batch ID')
-        api_key = st.text_input('Enter your API key')
+    st.markdown('Please visit your [batch dashboard](https://app.valueserp.com/batches) to retrieve your batch ID.')
+    batch_id = st.text_input('Please indicate your batch ID')
+    api_key = st.text_input('Enter your API key')
     
     if batch_id != '' and api_key!='':
         api_result = requests.get(f'https://api.valueserp.com/batches/{batch_id}/results/1/csv', params={'api_key':api_key})
