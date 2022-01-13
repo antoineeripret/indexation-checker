@@ -52,7 +52,7 @@ with st.expander('STEP 1: Configure you extraction'):
             st.write(f'The execution of the script will cost you {str(len(urls))} credits. ')
 
 #second step
-with st.expander('STEP 2: Launch searches'):
+with st.expander('STEP 2: Add searches'):
     st.markdown('**You cannot launch this part of the tool without completing step 1 first!! Execution will fail.**')
     if st.button('Launch process'):
         #create our list of sets of keywords
