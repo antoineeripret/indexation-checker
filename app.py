@@ -77,10 +77,10 @@ with st.expander('STEP 2: Launch searches'):
         #create a list of parameters for each set
         for i in range(0, len(keywords)):
             params = []
-            for i in range(0, len(keywords[i])):
+            for y in range(0, len(keywords[i])):
                 params.append({
                 'api_key': api_key,
-                'q': urls[i],
+                'q': keywords[i][y],
                 'location': location,
                 'google_domain': google_domain,
                 'num': '20'
